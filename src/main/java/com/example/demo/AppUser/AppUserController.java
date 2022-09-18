@@ -64,7 +64,7 @@ public class AppUserController {
     }
 
     @PostMapping()
-    public AppUserDTO addNewUser(@RequestBody AddNewUserDTO user) {
+    public ResponseEntity<AppUserDTO> addNewUser(@RequestBody AddNewUserDTO user) {
         List<Role> roles = new ArrayList<>();
         user.getRoles().forEach(role -> {
             roles.add(roleRepository.findByName(role));
@@ -79,8 +79,11 @@ public class AppUserController {
                 roles
         );
 
-
-        return AppUserDTO.from(appUserService.saveUser(newUser));
+        try {
+            return ResponseEntity.ok().body(AppUserDTO.from(appUserService.saveUser(newUser)));
+        } catch (DuplicateKeyException e) {
+            return ResponseEntity.internalServerError().body(AppUserDTO.from(newUser));
+        }
     }
 
     @PostMapping(
@@ -109,7 +112,6 @@ public class AppUserController {
                     toAdd.add(newLecturer);
                 }
             } catch (IOException | CsvValidationException e) {
-                // to add: ignore if email already exists add those which do not
                 e.printStackTrace();
             }
         });
@@ -118,6 +120,7 @@ public class AppUserController {
             added.forEach(user -> {
                 addedUsers.add(AppUserDTO.from(user));
             });
+            return ResponseEntity.ok().body(addedUsers);
 
         } catch (DuplicateKeyException e) {
             List<AppUserDTO> duplicates = new ArrayList<>();
@@ -132,7 +135,6 @@ public class AppUserController {
             return ResponseEntity.internalServerError().body(duplicates);
         }
 
-        return ResponseEntity.ok().body(addedUsers);
     }
 
 

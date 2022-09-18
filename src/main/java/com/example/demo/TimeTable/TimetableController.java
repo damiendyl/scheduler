@@ -48,6 +48,7 @@ public class TimetableController {
         int year = (int) body.get("year");
         String semester = (String) body.get("semester");
         List<Map<String, String>> schedules = (List<Map<String, String>>) body.get("schedules");
+        System.out.println(year);
         return timetableService.saveNewTimetable(year, semester, schedules);
     }
 

@@ -203,14 +203,14 @@ class LecturersPageComponent extends Component {
 					autoComplete="off"
 				>
 					<Form.Item
-						label='ID'
+						label='University ID'
 						name='orgId'
 						labelCol={{span:8}}
 						wrapperCol={{span:8}}
 						rules={[
 							{
 								required: true,
-								message: 'Please enter ID',
+								message: 'Please enter university ID',
 							}
 						]}>
 						<Input />

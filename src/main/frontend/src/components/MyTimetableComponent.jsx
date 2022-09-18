@@ -46,7 +46,6 @@ class MyTimetableComponent extends Component {
 			.getMyTimetable(new Date().getFullYear())
 			.then(res => {
 				const events = [];
-				console.log(new Date().getFullYear())
 				res.data.map(semesterSchedule => {
 					const year = semesterSchedule.year;
 					semesterSchedule.schedule.map(schedule => {

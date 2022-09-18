@@ -29,7 +29,7 @@ class LoginFormComponent extends Component {
 				this.props.history.push(redirect);
 			})
 			.catch(e => {
-				message.error("Invalid username and password combination")
+				message.error("Login ID and password do not match.")
 			})
 	};
 
@@ -48,16 +48,17 @@ class LoginFormComponent extends Component {
 						onFinishFailed={this.onFinishFailed}
 						autoComplete="off"
 						className='loginForm'
+						size='large'
 					>
 						<Form.Item
-							label="Username"
+							label={<label style={ {fontSize: 18} }>University ID</label>}
 							name="username"
 							labelCol={ {span: 8} }
 							wrapperCol={ {span:8} }
 							rules={[
 							{
 								required: true,
-								message: 'Please enter username!',
+								message: 'Please enter your university ID',
 							},
 							]}
 						>
@@ -65,14 +66,14 @@ class LoginFormComponent extends Component {
 						</Form.Item>
 
 						<Form.Item
-							label="Password"
+							label={<label style={ {fontSize: 18} }>Password</label>}
 							name="password"
 							labelCol={ {span: 8}}
 							wrapperCol={ {span:8} }
 							rules={[
 							{
 								required: true,
-								message: 'Please enter password!',
+								message: 'Please enter password',
 							},
 							]}
 						>

@@ -23,7 +23,7 @@ public interface TimetableRepository extends MongoRepository<Timetable, String> 
     BasicDBObject getYears();
 
     String unwindSchedule = "{ $unwind: { path: '$schedule' } }";
-    String matchUserSchedule = "{ $match: { year: ?0, $or: [{ 'schedule.module.students': { $in: [?1] } }, { 'schedule.module.lecturers._id': ?1 }] } }";
+    String matchUserSchedule = "{ $match: { year: ?0, $or: [{ 'schedule.module.students': { $in: [?1] } }, { 'schedule.module.lecturers._id': { $in: [?1] } }] } }";
     String groupIntoYearSemester = "{ $group: { _id: { year: '$year', semester: '$semester' }, schedule: { $addToSet: '$schedule' }, year: { $first: '$year' }, semester: { $first: '$semester' } } }";
     @Aggregation(pipeline = {matchYear, sortByCreated, groupByYearSemester, project, unwindSchedule, matchUserSchedule, groupIntoYearSemester})
     List<Timetable> findMyTimetable(int year, ObjectId userId);

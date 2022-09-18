@@ -11,6 +11,7 @@ import com.example.demo.LectureModule.ModuleRepository;
 import com.example.demo.Role.Role;
 import com.example.demo.Role.RoleRepository;
 import com.example.demo.TimeTable.*;
+import com.github.javafaker.App;
 import com.github.javafaker.Faker;
 import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
@@ -175,19 +176,34 @@ public class DemoApplication {
 						}
 						teachers.add(lecturer);
 					}
+					System.out.println(teachers);
+
+					String level = row[0];
+					String moduleCode = row[1];
+					String title = row[2];
+					int year = 2022;
+					String semester = row[3];
+					LocalDate beginDate = semester.equals("1") ? LocalDate.of(year, 10, 1) : LocalDate.of(year+1, 2, 1);
+					LocalDate endDate = semester.equals("1") ? LocalDate.of(year, 12, 15) : LocalDate.of(year+1, 4, 15);
+					List<ObjectId> studentIdList = new ArrayList<>();
+					AppUser coordinator = lecturerByName.get(row[5]);
+					AppUser reviewer = lecturerByName.get(row[6]);
+					int capacity = Integer.parseInt(row[7].trim());
 
 					LectureModule newLectureModule = new LectureModule(
-							row[0],
-							row[1],
-							row[2],
-							2022,
-							row[3],
+							level,
+							moduleCode,
+							title,
+							year,
+							semester,
 							2,
+							beginDate,
+							endDate,
 							teachers,
-							new ArrayList<>(),
-							lecturerByName.get(row[5]),
-							lecturerByName.get(row[6]),
-							Integer.parseInt(row[7].trim())
+							studentIdList,
+							coordinator,
+							reviewer,
+							capacity
 					);
 					lectureModules.add(newLectureModule);
 				}

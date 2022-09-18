@@ -5,7 +5,6 @@ import { Content } from 'antd/lib/layout/layout';
 import { Button, Card, Collapse, Form, Layout, Modal, Popconfirm, Select, Space, Table, Tooltip, Upload, Typography } from 'antd';
 import TimetableService from '../services/TimetableService';
 import ClassroomService from '../services/ClassroomService';
-import CollapsePanel from 'antd/lib/collapse/CollapsePanel';
 import ModuleService from '../services/ModuleService';
 import Dragger from 'antd/lib/upload/Dragger';
 import HeaderComponent from './HeaderComponent';
@@ -166,7 +165,8 @@ class TimetablePageComponent extends Component {
 			this.setState({ editing: e.currentTarget.id });
 		}
 
-		const cancelEdit = (e) => {
+		const cancelEdit = (semester) => {
+			document.getElementById(`form${semester}`).reset()
 			this.setState({ editing: null })
 		}
 
@@ -189,7 +189,7 @@ class TimetablePageComponent extends Component {
 				}
 			}
 			TimetableService.saveNewTimetable(year, semester, newTimetableSchedule)
-				.then(this.getTimetableState(year))
+				.then(res => this.getTimetableState(year))
 				.then(this.setState({
 					editing: null,
 					saveLoading: false
@@ -232,17 +232,16 @@ class TimetablePageComponent extends Component {
 			});
 
 			const dataTable = (
-				<Collapse>
-					<CollapsePanel forceRender={true} header={"Year " + this.state.selectedYear} style={{ fontSize: 21 }}>
-						<Table
-							columns={tableColumns}
-							dataSource={null}
-							scroll={{ x: 800, y: 550 }}
-							pagination={false}
-							rowKey={record => record.index}
-						/>
-					</CollapsePanel>
-				</Collapse>
+				<>
+					<h2>{"Year " + this.state.selectedYear}</h2>
+					<Table
+						columns={tableColumns}
+						dataSource={null}
+						scroll={{ x: 800, y: 550 }}
+						pagination={false}
+						rowKey={record => record.index}
+					/>
+				</>
 			)
 
 			dataTables.push(dataTable)
@@ -310,7 +309,7 @@ class TimetablePageComponent extends Component {
 									</Select>) :
 									(<Tooltip
 										placement='topLeft'
-										overlayStyle={{ "white-space": 'pre-line', textAlign: 'center' }}
+										overlayStyle={{ textAlign: 'center' }}
 										title={moduleCode + "\n" + moduleTitle}>
 										{moduleTitle}
 									</Tooltip>);
@@ -350,29 +349,28 @@ class TimetablePageComponent extends Component {
 				}
 
 				const dataTable = (
-					<Collapse onChange={onCollapseChange}>
-						<CollapsePanel forceRender={true} header={"Year " + this.state.selectedYear + " Semester " + index} key={index} style={{ fontSize: 21 }}>
-							<Form onFinish={saveEdit}>
-								<Form.Item name='year' initialValue={this.state.selectedYear} hidden={true} />
-								<Form.Item name='semester' initialValue={index} hidden={true} />
-								<div className='action-buttons-row' style={{ position: 'relative' }}>
-									<Button id={index} type='default' onClick={startEdit} style={{ display: ((this.state.editing === index) ? 'none' : 'block') }}>Edit</Button>
-									<Popconfirm title='Changes will not be saved. Are you sure?' onConfirm={cancelEdit}>
-										<Button id={'cancel' + index} loading={this.state.saveLoading} type='danger' style={{ display: ((this.state.editing === index) ? 'block' : 'none') }}>Cancel</Button>
-									</Popconfirm>
-									<Button type='primary' loading={this.state.saveLoading} htmlType='submit' style={{ display: ((this.state.editing === index) ? 'block' : 'none') }}>Save</Button>
-								</div>
-								<Table
-									bordered
-									columns={tableColumns}
-									dataSource={ this.state.gettingTimetableState ? null : this.state.timetable[index] }
-									scroll={{ x: 800, y: 550 }}
-									pagination={false}
-									rowKey={record => record.index}
-								/>
-							</Form>
-						</CollapsePanel>
-					</Collapse>
+					<>
+						<Form onFinish={saveEdit} id={`form${index}`}>
+							<Form.Item name='year' initialValue={this.state.selectedYear} hidden={true} />
+							<Form.Item name='semester' initialValue={index} hidden={true} />
+							<div className='action-buttons-row' style={{ position: 'relative' }}>
+								<h2>{"Year " + this.state.selectedYear + " Semester " + index}</h2>
+								<Button id={index} type='default' onClick={startEdit} style={{ display: ((this.state.editing === index) ? 'none' : 'block') }}>Edit</Button>
+								<Popconfirm title='Changes will not be saved. Are you sure?' onConfirm={() => cancelEdit(index)} >
+									<Button id={'cancel' + index} loading={this.state.saveLoading} type='danger' style={{ display: ((this.state.editing === index) ? 'block' : 'none') }}>Cancel</Button>
+								</Popconfirm>
+								<Button type='primary' loading={this.state.saveLoading} htmlType='submit' style={{ display: ((this.state.editing === index) ? 'block' : 'none') }}>Save</Button>
+							</div>
+							<Table
+								bordered
+								columns={tableColumns}
+								dataSource={ this.state.gettingTimetableState ? null : this.state.timetable[index] }
+								scroll={{ x: 800, y: 550 }}
+								pagination={false}
+								rowKey={record => record.index}
+							/>
+						</Form>
+					</>
 				);
 
 				dataTables.push((

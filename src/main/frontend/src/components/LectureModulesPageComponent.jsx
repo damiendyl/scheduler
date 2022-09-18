@@ -34,7 +34,7 @@ class LectureModulesPageComponent extends Component {
 			
 				return {...mod, key: mod.id};
 			});
-			this.setState({lectureModules: moduleData, showingModules: moduleData})
+			this.setState({lectureModules: moduleData, showingModules: moduleData}, () => console.log(this.state.showingModules))
 		});
 
 		ModuleService.getDistinctYears().then(res => {
